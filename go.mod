@@ -8,6 +8,7 @@ require (
 	github.com/nlopes/slack v0.6.0
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.6.1
+	github.com/xanzy/go-gitlab v0.22.2
 	golang.org/x/oauth2 v0.0.0-20191202225959-858c2ad4c8b6
 	google.golang.org/api v0.14.0
 )

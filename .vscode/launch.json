@@ -12,13 +12,19 @@
       "program": "${fileDirname}",
       "env": {},
       "args": [
-        "${input:input1}"
+        "${input:input1}",
+        "${input:input2}"
       ]
     }
   ],
   "inputs": [
     {
       "id": "input1",
+      "type": "promptString",
+      "description": ""
+    },
+    {
+      "id": "input2",
       "type": "promptString",
       "description": ""
     }

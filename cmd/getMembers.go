@@ -17,11 +17,13 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/xanzy/go-gitlab"
 )
 
-// gitlabCmd represents the gitlab command
-var gitlabCmd = &cobra.Command{
-	Use:   "gitlab",
+// getMembersCmd represents the getMembers command
+var getMembersCmd = &cobra.Command{
+	Use:   "getMembers",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -29,18 +31,35 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		git := gitlab.NewClient(nil, viper.GetString("gitlab-token"))
+		project, _, err := git.Projects.GetProject("simplenexus-engineering/simplenexus.com", nil)
+		if err != nil {
+			panic(err)
+		}
+		options := &gitlab.ListProjectMembersOptions{
+			ListOptions: gitlab.ListOptions{
+				Page:    1,
+				PerPage: 100,
+			},
+		}
+		project_members, _, err := git.ProjectMembers.ListAllProjectMembers(project.ID, options)
+		for _, project_member := range project_members {
+			cmd.Printf("Name: %-30s Username: %-20s Access Level: %d\n", project_member.Name, project_member.Username, project_member.AccessLevel)
+		}
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(gitlabCmd)
+	gitlabCmd.AddCommand(getMembersCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// gitlabCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// getMembersCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// gitlabCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// getMembersCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

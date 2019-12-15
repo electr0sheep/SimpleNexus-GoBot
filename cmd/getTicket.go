@@ -16,12 +16,16 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+
+	"github.com/andygrunwald/go-jira"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
-// jiraCmd represents the jira command
-var jiraCmd = &cobra.Command{
-	Use:   "jira",
+// getTicketCmd represents the getTicket command
+var getTicketCmd = &cobra.Command{
+	Use:   "getTicket",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -29,18 +33,40 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
+	Args: cobra.ExactArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		tp := jira.BasicAuthTransport{
+			Username: viper.GetString("atlassian-email"),
+			Password: viper.GetString("atlassian-token"),
+		}
+
+		jiraClient, err := jira.NewClient(tp.Client(), "https://simplenexus.atlassian.net/")
+		if err != nil {
+			panic(err)
+		}
+
+		issue, response, err := jiraClient.Issue.Get(args[0], nil)
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("%d\n", response.StatusCode)
+		fmt.Printf("%s: %+v\n", issue.Key, issue.Fields.Summary)
+		fmt.Printf("Type: %s\n", issue.Fields.Type.Name)
+		fmt.Printf("Priority: %s\n", issue.Fields.Priority.Name)
+	},
 }
 
 func init() {
-	rootCmd.AddCommand(jiraCmd)
+	jiraCmd.AddCommand(getTicketCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// jiraCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// getTicketCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// jiraCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// getTicketCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

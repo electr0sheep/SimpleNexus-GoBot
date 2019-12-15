@@ -45,7 +45,10 @@ to quickly create a Cobra application.`,
 		}
 
 		api := slack.New(token)
-		api.PostMessage(SLACK_CHANNEL, slack.MsgOptionText(args[0], false))
+		_, _, err := api.PostMessage(SLACK_CHANNEL, slack.MsgOptionText(args[0], false))
+		if err != nil {
+			panic(err)
+		}
 	},
 }
 

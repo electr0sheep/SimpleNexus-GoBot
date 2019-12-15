@@ -35,9 +35,23 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		// check for bad configuration
+		email := viper.GetString("atlassian-email")
+		token := viper.GetString("atlassian-token")
+		if email == "" && token == "" {
+			cmd.Printf("No atlassian email or token found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
+			return
+		} else if email == "" {
+			cmd.Printf("No atlassian email found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
+			return
+		} else if token == "" {
+			cmd.Printf("No atlassian token found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
+			return
+		}
+
 		tp := jira.BasicAuthTransport{
-			Username: viper.GetString("atlassian-email"),
-			Password: viper.GetString("atlassian-token"),
+			Username: email,
+			Password: token,
 		}
 
 		jiraClient, err := jira.NewClient(tp.Client(), "https://simplenexus.atlassian.net/")

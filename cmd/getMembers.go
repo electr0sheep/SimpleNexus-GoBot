@@ -32,7 +32,14 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		git := gitlab.NewClient(nil, viper.GetString("gitlab-token"))
+		// check for bad configuration
+		token := viper.GetString("gitlab-token")
+		if token == "" {
+			cmd.Printf("No gitlab token found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
+			return
+		}
+
+		git := gitlab.NewClient(nil, token)
 		project, _, err := git.Projects.GetProject("simplenexus-engineering/simplenexus.com", nil)
 		if err != nil {
 			panic(err)
@@ -45,7 +52,7 @@ to quickly create a Cobra application.`,
 		}
 		project_members, _, err := git.ProjectMembers.ListAllProjectMembers(project.ID, options)
 		for _, project_member := range project_members {
-			cmd.Printf("Name: %-30s Username: %-20s Access Level: %d\n", project_member.Name, project_member.Username, project_member.AccessLevel)
+			cmd.Printf("Name: %-25s Username: %-20s Access Level: %d\n", project_member.Name, project_member.Username, project_member.AccessLevel)
 		}
 	},
 }

@@ -33,7 +33,14 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		git := gitlab.NewClient(nil, viper.GetString("gitlab-token"))
+		// check for bad configuration
+		token := viper.GetString("gitlab-token")
+		if token == "" {
+			cmd.Printf("No gitlab token found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
+			return
+		}
+
+		git := gitlab.NewClient(nil, token)
 		project, _, err := git.Projects.GetProject("simplenexus-engineering/simplenexus.com", nil)
 		if err != nil {
 			panic(err)

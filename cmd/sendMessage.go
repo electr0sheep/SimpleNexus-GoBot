@@ -37,12 +37,14 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+		// check for bad configuration
 		token := viper.GetString("slack-token")
 		if token == "" {
 			cmd.Printf("No slack token found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
 			return
 		}
-		api := slack.New(viper.GetString("slack-token"))
+
+		api := slack.New(token)
 		api.PostMessage(SLACK_CHANNEL, slack.MsgOptionText(args[0], false))
 	},
 }

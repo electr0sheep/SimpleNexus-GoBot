@@ -16,18 +16,12 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/nlopes/slack"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
-const (
-	SLACK_CHANNEL string = "go-test"
-)
-
-// sendMessageCmd represents the sendMessage command
-var sendMessageCmd = &cobra.Command{
-	Use:   "sendMessage",
+// slackCmd represents the slack command
+var slackCmd = &cobra.Command{
+	Use:   "slack",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -35,28 +29,18 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Args: cobra.ExactArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		token := viper.GetString("slack-token")
-		if token == "" {
-			cmd.Printf("No slack token found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
-			return
-		}
-		api := slack.New(viper.GetString("slack-token"))
-		api.PostMessage(SLACK_CHANNEL, slack.MsgOptionText(args[0], false))
-	},
 }
 
 func init() {
-	slackCmd.AddCommand(sendMessageCmd)
+	rootCmd.AddCommand(slackCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// sendMessageCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// slackCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// sendMessageCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// slackCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

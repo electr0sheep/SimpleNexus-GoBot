@@ -25,14 +25,10 @@ import (
 )
 
 const (
-	LAST_N_CHARACTERS      int    = 4
-	GITLAB_TOKEN_KEY       string = "gitlab-token"
-	SLACK_TOKEN_KEY        string = "slack-token"
-	ATLASSIAN_EMAIL_KEY    string = "atlassian-email"
-	ATLASSIAN_TOKEN_KEY    string = "atlassian-token"
-	GITLAB_TOKEN_LENGTH    int    = 20
-	SLACK_TOKEN_LENGTH     int    = 53
-	ATLASSIAN_TOKEN_LENGTH int    = 24
+	LAST_N_CHARACTERS      int = 4
+	GITLAB_TOKEN_LENGTH    int = 20
+	SLACK_TOKEN_LENGTH     int = 53
+	ATLASSIAN_TOKEN_LENGTH int = 24
 )
 
 // configureCmd represents the configure command
@@ -56,7 +52,7 @@ api scope, and copy the token here`)
 		cmd.Println("")
 
 		// configure slack token
-		slackToken := viper.GetString("slack-token")
+		slackToken := viper.GetString(SLACK_TOKEN_KEY)
 		cmd.Println(`Get the token from Michael DeGraw[https://simplenexus.slack.com/team/U9NPLPKHQ],
 and copy the token here`)
 		cmd.Printf("Slack Token %s]: ", getCurrentConfig(slackToken, true))
@@ -65,12 +61,12 @@ and copy the token here`)
 		cmd.Println("")
 
 		// configure atlassian email
-		atlassianEmail := viper.GetString("atlassian-email")
+		atlassianEmail := viper.GetString(ATLASSIAN_EMAIL_KEY)
 		cmd.Println(`This should be the email you use to log into Atlassian`)
 		cmd.Printf("Atlassian Email [%s]: ", getCurrentConfig(atlassianEmail, false))
 		atlassianEmail = getNewTokenValue()
 		if len(atlassianEmail) > 0 {
-			viper.Set("atlassian-email", atlassianEmail)
+			viper.Set(ATLASSIAN_EMAIL_KEY, atlassianEmail)
 		}
 		cmd.Println("")
 

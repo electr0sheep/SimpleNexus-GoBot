@@ -23,9 +23,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-// getTicketCmd represents the getTicket command
-var getTicketCmd = &cobra.Command{
-	Use:   "getTicket",
+// getIssueCmd represents the getIssue command
+var getIssueCmd = &cobra.Command{
+	Use:   "getIssue",
 	Short: "A brief description of your command",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -36,8 +36,8 @@ to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		// check for bad configuration
-		email := viper.GetString("atlassian-email")
-		token := viper.GetString("atlassian-token")
+		email := viper.GetString(ATLASSIAN_EMAIL_KEY)
+		token := viper.GetString(ATLASSIAN_TOKEN_KEY)
 		if email == "" && token == "" {
 			cmd.Printf("No atlassian email or token found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
 			return
@@ -54,33 +54,38 @@ to quickly create a Cobra application.`,
 			Password: token,
 		}
 
-		jiraClient, err := jira.NewClient(tp.Client(), "https://simplenexus.atlassian.net/")
+		jiraClient, err := jira.NewClient(tp.Client(), ATLASSIAN_URL)
 		if err != nil {
 			panic(err)
 		}
 
-		issue, response, err := jiraClient.Issue.Get(args[0], nil)
+		issue, _, err := jiraClient.Issue.Get(args[0], nil)
 		if err != nil {
 			panic(err)
 		}
 
-		fmt.Printf("%d\n", response.StatusCode)
 		fmt.Printf("%s: %+v\n", issue.Key, issue.Fields.Summary)
+		fmt.Printf("%s/browse/%s\n", ATLASSIAN_URL, issue.Key)
 		fmt.Printf("Type: %s\n", issue.Fields.Type.Name)
 		fmt.Printf("Priority: %s\n", issue.Fields.Priority.Name)
+		fmt.Printf("Comments:\n")
+		for index, comment := range issue.Fields.Comments.Comments {
+			fmt.Printf("%d: Author: %s\n", index, comment.Author.DisplayName)
+			fmt.Printf("%s\n\n", comment.Body)
+		}
 	},
 }
 
 func init() {
-	jiraCmd.AddCommand(getTicketCmd)
+	jiraCmd.AddCommand(getIssueCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// getTicketCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// getIssueCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// getTicketCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// getIssueCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

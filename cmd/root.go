@@ -23,6 +23,13 @@ import (
 	"github.com/spf13/viper"
 )
 
+const (
+	GITLAB_TOKEN_KEY    string = "gitlab-token"
+	SLACK_TOKEN_KEY     string = "slack-token"
+	ATLASSIAN_EMAIL_KEY string = "atlassian-email"
+	ATLASSIAN_TOKEN_KEY string = "atlassian-token"
+)
+
 var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands

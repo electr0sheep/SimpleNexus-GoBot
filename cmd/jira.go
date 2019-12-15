@@ -19,6 +19,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	ATLASSIAN_URL string = "https://simplenexus.atlassian.net"
+)
+
 // jiraCmd represents the jira command
 var jiraCmd = &cobra.Command{
 	Use:   "jira",

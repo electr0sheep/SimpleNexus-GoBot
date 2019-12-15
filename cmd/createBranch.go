@@ -34,7 +34,7 @@ to quickly create a Cobra application.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		// check for bad configuration
-		token := viper.GetString("gitlab-token")
+		token := viper.GetString(GITLAB_TOKEN_KEY)
 		if token == "" {
 			cmd.Printf("No gitlab token found. Please run `%s %s`\n", rootCmd.Use, configureCmd.Use)
 			return
